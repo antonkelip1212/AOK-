@@ -7,10 +7,8 @@ const port = process.env.PORT || 3000;
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 
-// For any other routes, serve index.html (good for SPA or simple sites)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// Catch-all route is not needed for a simple static site
+// express.static already handles serving index.html for the root path
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on port ${port}`);
