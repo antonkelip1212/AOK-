@@ -15,21 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.style.opacity = '0.8';
                 btn.disabled = true;
 
-                // Telegram credentials
-                const token = '7158171404:AAHfnjkbGc1vg46o9hpSUEFQUUcnLb8RQHw';
-                const chatId = '1482581719';
-                const message = `🔥 Новая заявка с сайта АОК!\n📞 Телефон: ${phoneInput}`;
-                const url = `https://api.telegram.org/bot${token}/sendMessage`;
-
-                fetch(url, {
+                fetch('/api/submit-lead', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message,
-                    })
+                    body: JSON.stringify({ phone: phoneInput })
                 })
                 .then(response => {
                     if (response.ok) {
