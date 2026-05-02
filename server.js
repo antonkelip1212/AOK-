@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const axios = require('axios');
 const app = express();
 
 const port = process.env.PORT || 3000;
@@ -31,22 +32,20 @@ app.post('/api/submit-lead', async (req, res) => {
         const message = `🔥 Новая заявка с сайта АОК!\n📞 Телефон: ${phone}`;
         const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        try {
+            const response = await axios.post(url, {
                 chat_id: chatId,
                 text: message,
-            })
-        });
+            });
 
-        if (response.ok) {
-            res.json({ success: true, message: 'Lead sent successfully' });
-        } else {
-            const errorData = await response.text();
-            console.error('Telegram API error:', errorData);
+            if (response.status === 200) {
+                res.json({ success: true, message: 'Lead sent successfully' });
+            } else {
+                console.error('Telegram API returned non-200 status:', response.status);
+                res.status(500).json({ success: false, message: 'Error sending to Telegram' });
+            }
+        } catch (axiosError) {
+            console.error('Telegram API error:', axiosError.response ? axiosError.response.data : axiosError.message);
             res.status(500).json({ success: false, message: 'Error sending to Telegram' });
         }
     } catch (error) {
